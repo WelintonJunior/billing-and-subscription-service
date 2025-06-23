@@ -1,0 +1,519 @@
+basePath: /
+definitions:
+  types.ListProductResponse:
+    properties:
+      message:
+        items:
+          $ref: '#/definitions/types.Product'
+        type: array
+      success:
+        type: boolean
+    type: object
+  types.ListUserResponse:
+    properties:
+      message:
+        items:
+          $ref: '#/definitions/types.User'
+        type: array
+      success:
+        type: boolean
+    type: object
+  types.Product:
+    properties:
+      createdAt:
+        type: string
+      id:
+        type: string
+      name:
+        type: string
+      updatedAt:
+        type: string
+      value:
+        type: number
+    type: object
+  types.ProductResponse:
+    properties:
+      message:
+        $ref: '#/definitions/types.Product'
+      success:
+        type: boolean
+    type: object
+  types.User:
+    properties:
+      createdAt:
+        type: string
+      email:
+        type: string
+      full_name:
+        type: string
+      id:
+        type: string
+      isActive:
+        type: boolean
+      password:
+        type: string
+      updatedAt:
+        type: string
+    type: object
+  types.UserResponse:
+    properties:
+      message:
+        $ref: '#/definitions/types.User'
+      success:
+        type: boolean
+    type: object
+host: localhost:3000
+info:
+  contact: {}
+  description: API de autenticação e gestão de usuários
+  title: WattsUp API
+  version: "1.0"
+paths:
+  /api/v1/auth/login:
+    post:
+      consumes:
+      - application/json
+      description: Generates access and refresh tokens
+      parameters:
+      - description: Credentials
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/types.User'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "401":
+          description: Unauthorized
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: User login
+      tags:
+      - Auth
+  /api/v1/auth/refresh:
+    get:
+      consumes:
+      - application/json
+      description: Generates new access token using the refresh token in HttpOnly
+        cookie
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "401":
+          description: Unauthorized
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Refresh access token
+      tags:
+      - Auth
+  /api/v1/auth/register:
+    post:
+      consumes:
+      - application/json
+      description: Creates a new user in the database
+      parameters:
+      - description: User data
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/types.User'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            additionalProperties: true
+            type: object
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: User registration
+      tags:
+      - Auth
+  /api/v1/products:
+    get:
+      consumes:
+      - application/json
+      description: Retrieves a list of all registered products
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/types.ListProductResponse'
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: List Products
+      tags:
+      - Product
+    post:
+      consumes:
+      - application/json
+      description: Creates a new product in the system
+      parameters:
+      - description: Product data
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/types.Product'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Create Product
+      tags:
+      - Product
+  /api/v1/products/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Removes a product by its ID
+      parameters:
+      - description: Product ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "404":
+          description: Not Found
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Delete Product by ID
+      tags:
+      - Product
+    get:
+      consumes:
+      - application/json
+      description: Retrieves a product's information by its ID
+      parameters:
+      - description: Product ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/types.ProductResponse'
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "404":
+          description: Not Found
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Get Product by ID
+      tags:
+      - Product
+    put:
+      consumes:
+      - application/json
+      description: Updates the details of a specific product
+      parameters:
+      - description: Product ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Updated product data
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/types.Product'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/types.ProductResponse'
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "404":
+          description: Not Found
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Update Product by ID
+      tags:
+      - Product
+  /api/v1/users:
+    get:
+      consumes:
+      - application/json
+      description: Retrieves a list of all registered users
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/types.ListUserResponse'
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: List Users
+      tags:
+      - User
+  /api/v1/users/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Deletes a user by their ID
+      parameters:
+      - description: User ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "404":
+          description: Not Found
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Delete User by ID
+      tags:
+      - User
+    get:
+      consumes:
+      - application/json
+      description: Retrieves a specific user's details by their ID
+      parameters:
+      - description: User ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/types.UserResponse'
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "404":
+          description: Not Found
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Get User by ID
+      tags:
+      - User
+    put:
+      consumes:
+      - application/json
+      description: Updates a specific user's information
+      parameters:
+      - description: User ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Updated user data
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/types.User'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/types.UserResponse'
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "404":
+          description: Not Found
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Update User by ID
+      tags:
+      - User
+securityDefinitions:
+  BearerAuth:
+    in: header
+    name: Authorization
+    type: apiKey
+swagger: "2.0"
