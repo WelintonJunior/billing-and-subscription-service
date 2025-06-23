@@ -4,15 +4,24 @@ import (
 	"net/http"
 
 	"github.com/gofiber/fiber/v2"
+	"github.com/google/uuid"
 	"github.com/stripe/stripe-go/v82"
 )
 
-func CreateSubscription(sc *stripe.Client, customerID, priceID string) fiber.Handler {
+func CreateSubscription(sc *stripe.Client) fiber.Handler {
 	return func(c *fiber.Ctx) error {
-		customerID := c.Query("customer_id", "")
+		customerID, err := uuid.Parse(c.Query("customer_id", ""))
+
+		if err != nil {
+			return c.Status(http.StatusBadRequest).JSON(fiber.Map{
+				"success": false,
+				"error":   "Invalid customer ID format",
+			})
+		}
+
 		priceID := c.Query("price_id", "")
 
-		if customerID == "" || priceID == "" {
+		if customerID == uuid.Nil || priceID == "" {
 			return c.Status(http.StatusBadRequest).JSON(fiber.Map{
 				"success": false,
 				"error":   ErrMalformedRequest,
@@ -20,7 +29,7 @@ func CreateSubscription(sc *stripe.Client, customerID, priceID string) fiber.Han
 		}
 
 		params := &stripe.SubscriptionCreateParams{
-			Customer: stripe.String(customerID),
+			Customer: stripe.String(customerID.String()),
 			Items: []*stripe.SubscriptionCreateItemParams{
 				{
 					Price: stripe.String(priceID),

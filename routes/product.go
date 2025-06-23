@@ -1,7 +1,7 @@
 package routes
 
 import (
-	"github.com/WelintonJunior/identity-access-management-go/controllers"
+	"github.com/WelintonJunior/billing-and-subscription-service/controllers"
 	"github.com/gofiber/fiber/v2"
 )
 

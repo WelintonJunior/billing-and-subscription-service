@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"github.com/WelintonJunior/billing-and-subscription-service/cmd/auth"
+	"github.com/WelintonJunior/billing-and-subscription-service/infraestructure/stripe"
 	repository "github.com/WelintonJunior/billing-and-subscription-service/repositories"
 	"github.com/WelintonJunior/billing-and-subscription-service/services"
 	"github.com/WelintonJunior/billing-and-subscription-service/types"
@@ -107,8 +108,20 @@ func Register() fiber.Handler {
 			})
 		}
 
+		customer, err := stripe.CreateStripeCustomer(c.Context(), user.Email)
+
+		if err != nil {
+			return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+				"success": false,
+				"error":   fmt.Sprintf("failed to create Stripe customer: %v", err),
+			})
+		}
+
+		fmt.Println(customer)
+
 		return c.Status(http.StatusCreated).JSON(fiber.Map{
 			"message": "User created successfully",
+			"user":    customer,
 			"success": true,
 		})
 	}

@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"os"
 
+	"github.com/google/uuid"
 	"github.com/stripe/stripe-go/v82"
 )
 
@@ -18,11 +19,14 @@ func InitStripe() *stripe.Client {
 	return sc
 }
 
-func CreateStripeCustomer(ctx context.Context, sc *stripe.Client, email string) (*stripe.Customer, error) {
+func CreateStripeCustomer(ctx context.Context, email string) (*stripe.Customer, error) {
+
+	sc := InitStripe()
+
 	params := &stripe.CustomerCreateParams{
 		Description:      stripe.String("Stripe Developer"),
 		Email:            stripe.String(email),
-		PreferredLocales: stripe.StringSlice([]string{"en", "es"}),
+		PreferredLocales: stripe.StringSlice([]string{"pt", "en", "es"}),
 	}
 
 	customer, err := sc.V1Customers.Create(ctx, params)
@@ -32,9 +36,9 @@ func CreateStripeCustomer(ctx context.Context, sc *stripe.Client, email string) 
 	return customer, nil
 }
 
-func ListCustomerPaymentIntents(ctx context.Context, sc *stripe.Client, customerID string) stripe.Seq2[*stripe.PaymentIntent, error] {
+func ListCustomerPaymentIntents(ctx context.Context, sc *stripe.Client, customerID uuid.UUID) stripe.Seq2[*stripe.PaymentIntent, error] {
 	params := &stripe.PaymentIntentListParams{
-		Customer: stripe.String(customerID),
+		Customer: stripe.String(customerID.String()),
 	}
 	return sc.V1PaymentIntents.List(ctx, params)
 }
