@@ -13,6 +13,7 @@ import (
 	_ "github.com/WelintonJunior/billing-and-subscription-service/docs"
 	infraestructure "github.com/WelintonJunior/billing-and-subscription-service/infraestructure/postgres"
 	redis "github.com/WelintonJunior/billing-and-subscription-service/infraestructure/redis"
+	"github.com/WelintonJunior/billing-and-subscription-service/infraestructure/stripe"
 	"github.com/WelintonJunior/billing-and-subscription-service/routes"
 	"github.com/WelintonJunior/billing-and-subscription-service/utils"
 	"github.com/gofiber/fiber/v2"
@@ -82,6 +83,8 @@ func SetupApp(ctx context.Context) *fiber.App {
 	} else {
 		log.Println("Connected to Redis successfully")
 	}
+
+	stripe.InitStripe()
 
 	app.Get("/", func(c *fiber.Ctx) error {
 		return c.Status(fiber.StatusOK).JSON(fiber.Map{
